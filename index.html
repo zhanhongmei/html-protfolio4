@@ -1,0 +1,1088 @@
+<!DOCTYPE html><html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>七彩云南 · 梦幻之旅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #f97316 transparent;
+}
+
+body {
+    font-family: "Noto Sans SC", sans-serif;
+    background: #fef9f4;
+    color: #1f2937;
+    overflow-x: hidden;
+    line-height: 1.8;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #f97316;
+    border-radius: 3px;
+}
+
+#loader {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: linear-gradient(135deg, #fef9f4, #fff7ed, #fffbeb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+    transition: opacity .8s ease, visibility .8s ease;
+}
+
+#loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-ring {
+    width: 60px;
+    height: 60px;
+    border: 3px solid transparent;
+    border-top-color: #f97316;
+    border-right-color: #fbbf24;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loader-text {
+    font-family: "Noto Serif SC", serif;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #f97316, #f59e0b, #84cc16);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: .4;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0 48px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, .85);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom: 1px solid rgba(249, 115, 22, .1);
+    transition: .5s cubic-bezier(.25, .46, .45, .94);
+}
+
+nav.scrolled {
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 4px 20px rgba(249, 115, 22, .08);
+}
+
+.nav-logo {
+    font-family: "Noto Serif SC", serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #f97316, #f59e0b, #84cc16);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+}
+
+.nav-logo span {
+    font-size: .8rem;
+    opacity: .5;
+    -webkit-text-fill-color: #9ca3af;
+}
+
+.nav-links {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+}
+
+.nav-links a {
+    color: #6b7280;
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: .9rem;
+    font-weight: 500;
+    transition: .5s cubic-bezier(.25, .46, .45, .94);
+    position: relative;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #f97316;
+    background: rgba(249, 115, 22, .08);
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.nav-toggle span {
+    width: 24px;
+    height: 2px;
+    background: #1f2937;
+    border-radius: 2px;
+    transition: .5s cubic-bezier(.25, .46, .45, .94);
+}
+
+.nav-toggle.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.nav-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+.hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hero-bg {
+    position: absolute;
+    inset: -60px;
+    background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+    filter: brightness(.6) saturate(1.2);
+    transition: transform .1s linear;
+    z-index: 0;
+}
+
+.hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(249, 115, 22, .4) 0%, rgba(251, 191, 36, .3) 50%, rgba(132, 204, 22, .2) 100%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 800px;
+    padding: 0 24px;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 24px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, .4);
+    border-radius: 100px;
+    font-size: .85rem;
+    letter-spacing: 4px;
+    color: #fff;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, .12);
+}
+
+.hero h1 {
+    font-family: "Noto Serif SC", serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #fff 30%, #fef3c7 60%, #fde68a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero p {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, .85);
+    max-width: 600px;
+    margin: 0 auto 36px;
+    font-weight: 400;
+    line-height: 1.9;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+}
+
+.hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 36px;
+    border-radius: 100px;
+    font-size: .95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: .5s cubic-bezier(.25, .46, .45, .94);
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #f97316, #f59e0b);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(249, 115, 22, .35);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(249, 115, 22, .45);
+}
+
+.btn-outline {
+    background: rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, .3);
+    color: #fff;
+    backdrop-filter: blur(5px);
+}
+
+.btn-outline:hover {
+    border-color: #fff;
+    background: rgba(255, 255, 255, .25);
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, .7);
+    font-size: .75rem;
+    letter-spacing: 2px;
+}
+
+.scroll-mouse {
+    width: 26px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, .5);
+    border-radius: 13px;
+    position: relative;
+}
+
+.scroll-mouse::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 8px;
+    background: #fbbf24;
+    border-radius: 2px;
+    animation: scrollWheel 1.5s ease-in-out infinite;
+}
+
+@keyframes scrollWheel {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(12px);
+    }
+}
+
+section {
+    padding: 100px 24px;
+    position: relative;
+}
+
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 64px;
+}
+
+.section-tag {
+    display: inline-block;
+    font-size: .8rem;
+    letter-spacing: 3px;
+    color: #f97316;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.section-title {
+    font-family: "Noto Serif SC", serif;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #1f2937;
+}
+
+.section-subtitle {
+    color: #6b7280;
+    font-weight: 400;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#intro {
+    background: linear-gradient(180deg, #fef9f4 0%, #fff7ed 100%);
+}
+
+.intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.intro-text p {
+    color: #4b5563;
+    margin-bottom: 20px;
+    font-weight: 400;
+    font-size: 1.05rem;
+}
+
+.intro-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.stat-card {
+    background: #fff;
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, .08);
+    transition: .5s cubic-bezier(.25, .46, .45, .94);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(249, 115, 22, .15);
+    border-color: #f97316;
+}
+
+.stat-number {
+    font-family: "Noto Serif SC", serif;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #f97316, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: .85rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.destination {
+    padding: 120px 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.destination:nth-child(odd) {
+    background: #fff;
+}
+
+.destination:nth-child(even) {
+    background: #fff7ed;
+}
+
+.dest-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dest-grid.reverse .dest-image {
+    order: 2;
+}
+
+.dest-grid.reverse .dest-info {
+    order: 1;
+}
+
+.dest-image {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .1);
+}
+
+.dest-image img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    display: block;
+    transition: transform .8s ease;
+}
+
+.dest-image:hover img {
+    transform: scale(1.05);
+}
+
+.dest-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, .4) 100%);
+    pointer-events: none;
+}
+
+.dest-image-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+    padding: 6px 16px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, .9);
+    backdrop-filter: blur(10px);
+    font-size: .75rem;
+    letter-spacing: 2px;
+    color: #f97316;
+    font-weight: 600;
+    border: 1px solid rgba(249, 115, 22, .2);
+}
+
+.dest-rank {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2;
+    font-family: "Noto Serif SC", serif;
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, .12);
+    line-height: 1;
+}
+
+.dest-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .85rem;
+    color: #f97316;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.dest-name {
+    font-family: "Noto Serif SC", serif;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1f2937;
+}
+
+.dest-name-en {
+    font-size: .9rem;
+    color: #9ca3af;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.dest-desc {
+    color: #4b5563;
+    font-weight: 400;
+    margin-bottom: 20px;
+    line-height: 2;
+}
+
+.dest-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.dest-tag {
+    padding: 4px 14px;
+    border-radius: 100px;
+    background: rgba(249, 115, 22, .08);
+    border: 1px solid rgba(249, 115, 22, .15);
+    font-size: .8rem;
+    color: #ea580c;
+    font-weight: 500;
+}
+
+.dest-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.highlight-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .9rem;
+    color: #4b5563;
+}
+
+.highlight-item::before {
+    content: '✦';
+    color: #f59e0b;
+    font-size: .7rem;
+}
+
+.btn-detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 28px;
+    border-radius: 100px;
+    background: linear-gradient(135deg, #f97316, #f59e0b);
+    color: #fff;
+    font-size: .85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: .5s cubic-bezier(.25, .46, .45, .94);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, .25);
+}
+
+.btn-detail:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(249, 115, 22, .35);
+}
+
+#gallery {
+    background: linear-gradient(180deg, #fff7ed, #fef9f4);
+    padding: 100px 0;
+}
+
+.gallery-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 20px 48px;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.gallery-track::-webkit-scrollbar {
+    display: none;
+}
+
+.gallery-item {
+    flex: 0 0 320px;
+    height: 240px;
+    border-radius: 16px;
+    overflow: hidden;
+    scroll-snap-align: start;
+    transition: .5s cubic-bezier(.25, .46, .45, .94);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+}
+
+.gallery-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+footer {
+    background: #1f2937;
+    padding: 60px 24px 30px;
+}
+
+.footer-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 40px;
+}
+
+.footer-brand {
+    font-family: "Noto Serif SC", serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #f97316, #f59e0b, #84cc16);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+}
+
+.footer-desc {
+    color: #d1d5db;
+    font-size: .9rem;
+    font-weight: 300;
+}
+
+.footer-col h4 {
+    font-size: .85rem;
+    letter-spacing: 2px;
+    color: #f3f4f6;
+    margin-bottom: 16px;
+}
+
+.footer-col a {
+    display: block;
+    color: #9ca3af;
+    text-decoration: none;
+    font-size: .9rem;
+    padding: 4px 0;
+    transition: .5s cubic-bezier(.25, .46, .45, .94);
+}
+
+.footer-col a:hover {
+    color: #f97316;
+    padding-left: 4px;
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+    text-align: center;
+    color: #6b7280;
+    font-size: .8rem;
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity .8s ease, transform .8s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-delay-1 {
+    transition-delay: .1s;
+}
+
+.reveal-delay-2 {
+    transition-delay: .2s;
+}
+
+.reveal-delay-3 {
+    transition-delay: .3s;
+}
+
+.reveal-delay-4 {
+    transition-delay: .4s;
+}
+
+#particles-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.dest-image,
+.dest-info {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .8s ease, transform .8s ease;
+}
+
+.dest-image.show,
+.dest-info.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dest-image.show {
+    transition-delay: .1s;
+}
+
+.dest-info.show {
+    transition-delay: .2s;
+}
+
+@media(max-width:968px) {
+    .intro-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .dest-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .dest-grid.reverse .dest-image {
+        order: 1;
+    }
+
+    .dest-grid.reverse .dest-info {
+        order: 2;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .intro-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media(max-width:680px) {
+    nav {
+        padding: 0 16px;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 72px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: rgba(255, 255, 255, .98);
+        backdrop-filter: blur(20px);
+        padding: 16px;
+        gap: 4px;
+        display: none;
+        border-bottom: 1px solid rgba(249, 115, 22, .1);
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+    .dest-image img {
+        height: 280px;
+    }
+
+    .dest-highlights {
+        grid-template-columns: 1fr;
+    }
+
+    .intro-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .hero h1 {
+        font-size: clamp(2.2rem, 10vw, 3.5rem);
+    }
+
+    section {
+        padding: 60px 16px;
+    }
+
+    .destination {
+        padding: 80px 16px;
+    }
+}
+
+@media(max-width:480px) {
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+</head>
+<body>
+<div id="loader"><div class="loader-ring"></div><div class="loader-text">彩云之南</div></div>
+<canvas id="particles-canvas"></canvas>
+<nav id="navbar"><div class="nav-logo">七彩云南 <span>· Yunnan</span></div>
+<ul class="nav-links" id="navLinks">
+<li><a href="#intro" class="active">概览</a></li>
+<li><a href="#kunming">昆明</a></li>
+<li><a href="#dali">大理</a></li>
+<li><a href="#lijiang">丽江</a></li>
+<li><a href="#jianshui">建水</a></li>
+</ul><div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div></nav>
+<section class="hero" id="hero">
+<div class="hero-bg" id="heroBg" style="background:url(旅游图片/昆明/封面图片/1220e61947da0f2d54740e93ef8cce96.jpg) center/cover no-repeat;filter:brightness(.6) saturate(1.2)"></div>
+<div class="hero-content">
+<div class="hero-badge">✦ 世界文化遗产地</div><h1>七彩云南</h1>
+<p>漫步春城昆明鸥鸣湖畔，徜徉大理苍山洱海，探秘丽江雪山古城，寻访建水古桥老巷，山水烟火尽在七彩云南。</p>
+<div class="hero-actions"><a href="#kunming" class="btn btn-primary">开始探索 ↓</a><a href="#intro" class="btn btn-outline">了解更多</a></div></div>
+<div class="scroll-indicator"><div class="scroll-mouse"></div><span>向下滚动</span></div></section>
+<section id="intro"><div class="section-container">
+<div class="section-header reveal"><div class="section-tag">✦ 印象云南</div>
+<h2 class="section-title">风花雪月 · 人间仙境</h2>
+<p class="section-subtitle">云南，意为"彩云之南"，以其绚丽多姿的自然风光、多彩的民族文化和悠久的历史底蕴，吸引着无数旅行者前来朝圣。</p></div>
+<div class="intro-grid"><div class="intro-text reveal reveal-delay-1">
+<p>云南位于中国西南边陲，地形地貌复杂多样，气候类型丰富。从雄伟壮丽的雪山到秀美宁静的高原湖泊，从神奇瑰丽的喀斯特地貌到层层叠叠的哈尼梯田，云南以其惊艳世人的自然风光，成为了世界级的旅游目的地。</p>
+<p>在这片神奇的土地上，26个世居民族和谐共处，创造了丰富多彩的民族文化。无论是古色古香的丽江古城，还是风花雪月的大理，亦或是春城昆明的温润气候，每一处都有独特的魅力等待你去发现。</p></div>
+<div class="intro-stats reveal reveal-delay-2">
+<div class="stat-card"><div class="stat-number">26</div><div class="stat-label">世居民族</div></div>
+<div class="stat-card"><div class="stat-number">3</div><div class="stat-label">世界遗产</div></div>
+<div class="stat-card"><div class="stat-number">4</div><div class="stat-label">推荐目的地</div></div>
+</div></div></div></section>
+<section class="destination" id="kunming">
+<div class="dest-grid">
+<div class="dest-image">
+<div class="dest-image-badge">📍 春城花都</div>
+<img src="旅游图片/昆明/封面图片/1220e61947da0f2d54740e93ef8cce96.jpg" alt="昆明" onerror="this.style.display='none'">
+<div class="dest-rank">01</div></div>
+<div class="dest-info">
+<div class="dest-location">📍 昆明 · Kunming</div>
+<h3 class="dest-name">昆明</h3>
+<div class="dest-name-en">"Spring City" — Where Flowers Bloom Year-Round</div>
+<p class="dest-desc">昆明素有"春城"美名，翠湖公园藏闹市古韵，秋冬鸥鸟纷飞；滇池草海公园依托滇池水域建成环湖生态绿地，湖景与城市建筑相映；东华农贸市场满载滇地本土生鲜，沉淀春城市井烟火；远道而来越冬的红嘴鸥常年栖于滇池与翠湖，山水、园林、市井与生灵相融，勾勒出温润闲适的春城风貌。</p>
+<div class="dest-tags">
+<span class="dest-tag">翠湖公园</span>
+<span class="dest-tag">滇池</span>
+<span class="dest-tag">东华市场</span>
+<span class="dest-tag">海鸥</span>
+<span class="dest-tag">春城</span>
+</div><div class="dest-highlights">
+<div class="highlight-item">翠湖公园 · 观鸥胜地</div>
+<div class="highlight-item">滇池草海公园</div>
+<div class="highlight-item">东华农贸市场</div>
+<div class="highlight-item">红嘴鸥越冬</div>
+</div>
+<a href="kunming.html" class="btn-detail">📖 查看详情 →</a>
+</div></div></section>
+<section class="destination" id="dali">
+<div class="dest-grid reverse">
+<div class="dest-image">
+<div class="dest-image-badge">📍 风花雪月</div>
+<img src="旅游图片/大理/封面图片/7b8ca1945e2ea6f81ca0174373b13a95.jpg" alt="大理" onerror="this.style.display='none'">
+<div class="dest-rank">02</div></div>
+<div class="dest-info">
+<div class="dest-location">📍 大理 · Dali</div>
+<h3 class="dest-name">大理</h3>
+<div class="dest-name-en">"Wind, Flowers, Snow, Moon" — A Poetic Land</div>
+<p class="dest-desc">大理坐落于苍山之麓、洱海之滨，依托苍山、洱海、大理古城、白族扎染非遗四大核心名片，是滇西标志性文旅胜地，也是"风花雪月"人文自然名城。连绵巍峨的苍山雪峰连绵、云雾缭绕，澄澈辽阔的洱海环抱大理坝区，千年的古城与非遗手工艺相融共生，共同塑造了大理独特的自然风光与民族人文魅力。</p>
+<div class="dest-tags">
+<span class="dest-tag">苍山</span>
+<span class="dest-tag">洱海</span>
+<span class="dest-tag">古城</span>
+<span class="dest-tag">扎染</span>
+<span class="dest-tag">风花雪月</span>
+</div><div class="dest-highlights">
+<div class="highlight-item">苍山十九峰</div>
+<div class="highlight-item">洱海环湖骑行</div>
+<div class="highlight-item">大理古城</div>
+<div class="highlight-item">白族扎染非遗</div>
+</div>
+<a href="dali.html" class="btn-detail">📖 查看详情 →</a>
+</div></div></section>
+<section class="destination" id="lijiang">
+<div class="dest-grid">
+<div class="dest-image">
+<div class="dest-image-badge">📍 世界文化遗产</div>
+<img src="旅游图片/丽江/封面图片/da59a49a23afbf18793511aa75d4e170.jpg" alt="丽江" onerror="this.style.display='none'">
+<div class="dest-rank">03</div></div>
+<div class="dest-info">
+<div class="dest-location">📍 丽江 · Lijiang</div>
+<h3 class="dest-name">丽江</h3>
+<div class="dest-name-en">"Ancient Town on the Plateau" — UNESCO World Heritage</div>
+<p class="dest-desc">丽江坐拥雪山古城与多元民俗，巍峨玉龙雪山终年覆雪，以冰川盛景构筑城市天然屏障；丽江古城依雪山活水而建，小桥流水留存千年纳西古建与茶马古韵；随处可见的五彩经幡、特色藏族民俗妆造，见证滇西北纳西、藏族长久交融的人文历史。雪山自然风光与多民族民俗文化相辅相成，造就独有的高原古城风韵。</p>
+<div class="dest-tags">
+<span class="dest-tag">丽江古城</span>
+<span class="dest-tag">玉龙雪山</span>
+<span class="dest-tag">经幡</span>
+<span class="dest-tag">藏族妆造</span>
+<span class="dest-tag">世界遗产</span>
+</div><div class="dest-highlights">
+<div class="highlight-item">世界文化遗产古城</div>
+<div class="highlight-item">玉龙雪山</div>
+<div class="highlight-item">五彩经幡</div>
+<div class="highlight-item">藏族妆造体验</div>
+</div>
+<a href="lijiang.html" class="btn-detail">📖 查看详情 →</a>
+</div></div></section>
+<section class="destination" id="jianshui">
+<div class="dest-grid reverse">
+<div class="dest-image">
+<div class="dest-image-badge">📍 滇南古韵</div>
+<img src="旅游图片/建水/封面图片/369494feb7eceea9e97e120e07f49dce.jpg" alt="建水" onerror="this.style.display='none'">
+<div class="dest-rank">04</div></div>
+<div class="dest-info">
+<div class="dest-location">📍 建水 · Jianshui</div>
+<h3 class="dest-name">建水</h3>
+<div class="dest-name-en">"Ancient Town in Southern Yunnan" — A Cultural Heritage Gem</div>
+<p class="dest-desc">建水坐落于红河哈尼族彝族自治州，坐拥厚重滇南古韵与非遗文脉。建水古城留存千年临安府建筑风华，是滇南古建活化石；百年寸轨衍生的建水小火车串联古迹，复刻近代云南铁路记忆；清代古建十七孔双龙桥卧于河湖之上，山水古桥相映成趣；蚁工坊立足建水紫陶非遗，以红砖艺术活化千年陶艺。古城、古桥、老铁路与紫陶艺术共生，共同构成建水独有的滇南人文画卷。</p>
+<div class="dest-tags">
+<span class="dest-tag">建水古城</span>
+<span class="dest-tag">小火车</span>
+<span class="dest-tag">双龙桥</span>
+<span class="dest-tag">蚁工坊</span>
+<span class="dest-tag">紫陶</span>
+</div><div class="dest-highlights">
+<div class="highlight-item">建水千年古城</div>
+<div class="highlight-item">米轨小火车</div>
+<div class="highlight-item">十七孔双龙桥</div>
+<div class="highlight-item">蚁工坊紫陶艺术</div>
+</div>
+<a href="jianshui.html" class="btn-detail">📖 查看详情 →</a>
+</div></div></section>
+<section id="gallery"><div class="section-container">
+<div class="section-header reveal"><div class="section-tag">✦ 光影云南</div>
+<h2 class="section-title">印象画廊</h2>
+<p class="section-subtitle">每一帧都是大自然的馈赠，每一眼都是心灵的震撼</p></div></div>
+<div class="gallery-track" id="galleryTrack">
+<div class="gallery-item"><img src="旅游图片/昆明/封面图片/1220e61947da0f2d54740e93ef8cce96.jpg" alt="" onerror="this.parentElement.remove()"></div>
+<div class="gallery-item"><img src="旅游图片/大理/封面图片/7b8ca1945e2ea6f81ca0174373b13a95.jpg" alt="" onerror="this.parentElement.remove()"></div>
+<div class="gallery-item"><img src="旅游图片/丽江/封面图片/da59a49a23afbf18793511aa75d4e170.jpg" alt="" onerror="this.parentElement.remove()"></div>
+<div class="gallery-item"><img src="旅游图片/建水/封面图片/369494feb7eceea9e97e120e07f49dce.jpg" alt="" onerror="this.parentElement.remove()"></div>
+<div class="gallery-item"><img src="旅游图片/昆明/链接图片/翠湖公园.jpg" alt="" onerror="this.parentElement.remove()"></div>
+<div class="gallery-item"><img src="旅游图片/大理/链接图片/苍山图片.jpg" alt="" onerror="this.parentElement.remove()"></div>
+<div class="gallery-item"><img src="旅游图片/丽江/链接图片/藏族妆造.jpg" alt="" onerror="this.parentElement.remove()"></div>
+<div class="gallery-item"><img src="旅游图片/建水/链接图片/建水古城.jpg" alt="" onerror="this.parentElement.remove()"></div>
+</div></section>
+<footer><div class="footer-grid">
+<div><div class="footer-brand">七彩云南 · Yunnan Travel</div><p class="footer-desc">探索云南之美，感受彩云之南的无限魅力。<br>用心记录每一段旅途的精彩瞬间。</p></div>
+<div class="footer-col"><h4>目的地</h4>
+<a href="#kunming">昆明</a>
+<a href="#dali">大理</a>
+<a href="#lijiang">丽江</a>
+<a href="#jianshui">建水</a>
+</div><div class="footer-col"><h4>更多信息</h4><a href="#">旅行攻略</a><a href="#">当地美食</a><a href="#">民族文化</a><a href="#">交通指南</a></div>
+</div><div class="footer-bottom">© 2026 云南旅游 · 移动应用开发期末大作业</div></footer>
+<script>window.addEventListener("load",()=>{setTimeout(()=>document.getElementById("loader").classList.add("hidden"),800);});
+(function(){
+    const c=document.getElementById("particles-canvas"),ctx=c.getContext("2d");
+    let w,h,p=[];
+    const N=50;
+function r(){
+    w=c.width=window.innerWidth;h=c.height=window.innerHeight;
+}
+r();
+window.addEventListener("resize",r);
+class Pt{constructor(){this.reset();}
+reset(){
+    this.x=Math.random()*w;
+    this.y=Math.random()*h;
+    this.size=Math.random()*2+.5;
+    this.sx=(Math.random()-.5)*.4;
+    this.sy=(Math.random()-.5)*.4;
+    this.o=Math.random()*.3+.1;}
+update(){
+    this.x+=this.sx;
+    this.y+=this.sy;
+    if(this.x<0||this.x>w||this.y<0||this.y>h)this.reset();}
+draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle="rgba(249,115,22,"+this.o+")";
+    ctx.fill();}}
+for(let i=0;i<N;i++)p.push(new Pt());
+function a(){
+    ctx.clearRect(0,0,w,h);
+    p.forEach(v=>{v.update();
+        v.draw();});
+for(let i=0;i<p.length;i++)
+{for(let j=i+1;j<p.length;j++)
+    {const dx=p[i].x-p[j].x,dy=p[i].y-p[j].y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<150){ctx.beginPath();ctx.moveTo(p[i].x,p[i].y);
+            ctx.lineTo(p[j].x,p[j].y);
+            ctx.strokeStyle="rgba(249,115,22,"+(.06*(1-d/150))+")";
+            ctx.lineWidth=.5;ctx.stroke();}}}
+requestAnimationFrame(a);}a();})();
+const nav=document.getElementById("navbar"),aLinks=document.querySelectorAll(".nav-links a"),secs=document.querySelectorAll("section,.hero");
+window.addEventListener("scroll",()=>{
+    nav.classList.toggle("scrolled",window.scrollY>50);
+    let cur="";
+    secs.forEach(s=>{if(window.scrollY>=s.offsetTop-200)cur=s.id;});
+    aLinks.forEach(a=>{a.classList.toggle("active",a.getAttribute("href")==="#"+cur);});});
+document.getElementById("navToggle").addEventListener("click",function(){this.classList.toggle("open");
+document.getElementById("navLinks").classList.toggle("open");});
+aLinks.forEach(a=>a.addEventListener("click",()=>{
+    document.getElementById("navToggle").classList.remove("open");
+    document.getElementById("navLinks").classList.remove("open");}));
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add("show","visible");}});},{threshold:.15});
+document.querySelectorAll(".reveal,.dest-image,.dest-info").forEach(el=>obs.observe(el));
+const hbg=document.getElementById("heroBg");window.addEventListener("scroll",()=>{
+    const s=window.scrollY;
+    if(s<window.innerHeight)hbg.style.transform="translateY("+(s*.3)+"px)";});
+const gt=document.getElementById("galleryTrack");
+let sa=0;
+setInterval(()=>{
+    if(!gt)return;sa+=1;
+    if(sa>=gt.scrollWidth-gt.clientWidth)sa=0;gt.scrollTo({left:sa,behavior:"smooth"});},50);
+</script>
+</body></html>
